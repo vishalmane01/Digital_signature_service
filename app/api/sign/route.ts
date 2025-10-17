@@ -21,15 +21,12 @@ export async function POST(req: Request) {
     try {
       signature = await km.sign(docHash)
     } catch (err: any) {
+      console.error("Error signing document:", err)
       if (err?.code === "KMS_NOT_CONFIGURED") {
-        return NextResponse.json(
-          {
-            error:
-              "Key manager not configured. Set DEMO_PRIVATE_KEY_PEM (demo) or configure a KMS via environment variables.",
-            documentHashHex: docHash,
-          },
-          { status: 501 },
-        )
+        return NextResponse.json({
+          error: "Key manager not configured. Set DEMO_PRIVATE_KEY_PEM (demo) or configure a KMS.",
+          documentHashHex: docHash,
+        }, { status: 501 })
       }
       throw err
     }
@@ -58,6 +55,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ...record, signatureRecordUrl })
   } catch (e: any) {
+    console.error("Sign route error:", e)
     return NextResponse.json({ error: e?.message ?? "sign failed" }, { status: 500 })
   }
 }

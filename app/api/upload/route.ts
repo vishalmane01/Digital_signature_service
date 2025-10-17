@@ -12,7 +12,6 @@ export async function POST(req: Request) {
     const hashHex = await sha256(arrayBuffer)
     const pathname = `documents/${Date.now()}-${hashHex}-${file.name}`
 
-    // Demo: public access for ease of verification; switch to "private" in production.
     const { url } = await put(pathname, arrayBuffer, {
       access: "public",
       contentType: file.type || "application/octet-stream",
@@ -20,6 +19,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url, pathname, hashHex, size: file.size })
   } catch (e: any) {
+    console.error("Upload error:", e)
     return NextResponse.json({ error: e?.message ?? "upload failed" }, { status: 500 })
   }
 }

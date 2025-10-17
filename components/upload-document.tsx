@@ -15,9 +15,9 @@ export default function UploadDocument() {
     const form = new FormData()
     form.append("file", file)
     const res = await fetch("/api/documents/upload", { method: "POST", body: form })
+    const json = await res.json()
     if (!res.ok) {
-      const t = await res.text()
-      setError(t || "Upload failed")
+      setError(json?.error || "Upload failed")
       return
     }
     setStatus("Uploaded!")
